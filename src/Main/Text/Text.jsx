@@ -4,10 +4,11 @@ import Word from './Word/Word';
 
 const Text = () => {
     const [text, setText] = useState('');
-    const [activeWord,setActiveWord]=useState(0)
+    const [activeLetter, setActiveLetter] = useState(0);
+    const [activeWord, setActiveWord] = useState(0);
     const getText = async () => {
-        setActiveWord(0)
-        setText('')
+        setActiveWord(0);
+        setText('');
         try {
             const newText = async () => {
                 const res = await fetch('https://fish-text.ru/get?&type=paragraph&number=3&type=json');
@@ -15,19 +16,29 @@ const Text = () => {
                 return data;
             };
             newText().then((data) => {
-                console.log(data.text)
+                console.log(data.text);
                 setText(data.text);
             });
-        }catch(e){
-            console.log("error")
+        } catch (e) {
+            console.log('error');
         }
     };
-    const changeWord =()=>{
-        setActiveWord(activeWord +1)
-    }
+    const changeWord = () => {
+        setActiveWord(activeWord + 1);
+    };
+    const changeLetter = () => {
+        setActiveLetter(activeLetter + 1);
+        if (activeLetter > arrText[activeWord].length-1) {
+            console.log('x');
+            setActiveWord(activeWord + 1);
+            setActiveLetter(0);
+        }
+    };
 
-    
     const arrText = text.split(' ');
+    const act = arrText[activeWord];
+    console.log(act, act.length);
+
     // console.log(arrText);
     return (
         <div>
@@ -39,8 +50,8 @@ const Text = () => {
                                 value={el + ' '}
                                 key={index}
                                 indexWord={index}
-                                active={activeWord}
-                                wordLength={el.length}
+                                activeWord={activeWord}
+                                activeLetter={activeLetter}
                             />
                         );
                     })
@@ -50,6 +61,7 @@ const Text = () => {
             </div>
             <button onClick={getText}>Get text</button>
             <button onClick={changeWord}>change word</button>
+            <button onClick={changeLetter}> change letter</button>
         </div>
     );
 };

@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import styles from './Word.module.scss';
-import Letter from './Letter/Letter';
+import { Letter } from './Letter';
 
-const Word = ({ value, indexWord, active, wordLength }) => {
-    const [word, setWord] = useState(value);
-    // console.log(word, indexWord, active);
-    const arrLetters = word.split('');
+const Word = ({ value, indexWord, activeWord, activeLetter }) => {
+    const arrLetters = value.split('');
 
     return (
-        <div className={styles.word}>
+        <span className={styles.word}>
             {arrLetters ? (
                 arrLetters.map((el, index) => {
                     return (
@@ -17,15 +15,15 @@ const Word = ({ value, indexWord, active, wordLength }) => {
                             key={index}
                             indexLetter={index}
                             indexWord={indexWord}
-                            indexActive={active}
-                            wordLength={wordLength}
+                            activeLetter={activeLetter}
+                            activeWord={activeWord}
                         />
                     );
                 })
             ) : (
                 <div>x</div>
             )}
-        </div>
+        </span>
     );
 };
 export default Word;
