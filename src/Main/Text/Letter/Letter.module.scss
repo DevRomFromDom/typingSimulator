@@ -1,4 +1,4 @@
-.letter{
+.default{
    min-width: 10px;
    background-color: #fff;
 }
@@ -10,4 +10,9 @@
    min-width: 10px;
    background-color:red;
    height: 100%;
+   color:white;
+}
+.passed{
+   background-color:white;
+   color: green;
 }
