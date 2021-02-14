@@ -1,18 +1,23 @@
-.default{
-   min-width: 10px;
-   background-color: #fff;
-}
-.active{
+.default {
+    background-color: #fff;
     min-width: 10px;
-   background-color:green;
 }
-.mistake{
-   min-width: 10px;
-   background-color:red;
-   height: 100%;
-   color:white;
+.active {
+    min-width: 10px;
+    background-color: green;
+    border-radius: 5px;
+    padding: 0 2px;
 }
-.passed{
-   background-color:white;
-   color: green;
+.mistake {
+    min-width: 10px;
+    background-color: red;
+    height: 100%;
+    color: white;
+    padding: 0 2px;
+    border-radius: 5px;
+}
+.passed {
+    min-width: 10px;
+    background-color: white;
+    color: green;
 }

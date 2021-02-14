@@ -4,6 +4,7 @@ import Letter from './Letter/Letter';
 
 const Text = () => {
     const [text, setText] = useState([]);
+    const [time, setTime] = useState(0);
     const [passedText, setPassedText] = useState([]);
     const [activeText, setActiveText] = useState([]);
     const [defaultText, setDefaultText] = useState([]);
@@ -11,6 +12,8 @@ const Text = () => {
     const [status, setStatus] = useState('active');
     const [correctCount, setCorrectCount] = useState(0);
     const [mistakeCount, setMistakeCount] = useState(0);
+    const [speed, setSpeed] = useState(0);
+    const [accuracy, setAccuracy] = useState(100);
     const inputRef = useRef();
 
     const getText = async (e) => {
@@ -21,10 +24,14 @@ const Text = () => {
                 return data;
             };
             newText().then((data) => {
-                console.log(data.text);
-                setText(data.text.split(''));
                 setChangeIndex(0);
                 setStatus('active');
+                setSpeed(0);
+                setAccuracy(100);
+                setCorrectCount(0);
+                setMistakeCount(0);
+                setText(data.text.split(''));
+
                 inputRef.current.focus();
             });
         } catch (e) {
@@ -32,49 +39,53 @@ const Text = () => {
         }
     };
     useEffect(() => {
-        const useKeyPress = (e) => {
-            inputRef.current.focus();
-            if (e.key === activeText[0]) {
-                changeLetter();
-            }
-            if (e.key !== activeText[0] && text !== []) {
-                mistake();
-            } 
-        };
-        const useTabDown = (e) => {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                inputRef.current.focus();
-            }
-        };
-        document.addEventListener('keypress', useKeyPress);
-        document.addEventListener('keydown', useTabDown);
-        return () => {
-            document.removeEventListener('keypress', useKeyPress);
-            document.removeEventListener('keydown', useTabDown);
-        };
-    }, [activeText]);
-
-    useEffect(() => {
         setPassedText(text.slice(0, changeIndex));
         setActiveText(text.slice(changeIndex, changeIndex + 1));
         setDefaultText(text.slice(changeIndex + 1));
     }, [text, changeIndex]);
+    useEffect(() => {
+        const useKeyPress = async (e) => {
+            inputRef.current.focus();
 
-    const changeLetter = () => {
-        setCorrectCount(correctCount + 1);
-        setChangeIndex(changeIndex + 1);
-        setStatus('active');
-    };
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                inputRef.current.focus();
+            }
+            if (e.key === activeText[0]) {
+                setStatus('active');
+                setCorrectCount((count) => count + 1);
+                setChangeIndex((changeIndex) => changeIndex + 1);
+            }
+            if (e.key !== activeText[0] && text.length !== 0 && status === 'active') {
+                setMistakeCount((count) => count + 1);
+                setStatus('mistake');
+            }
+        };
+        document.addEventListener('keypress', useKeyPress);
 
-    const mistake = () => {
-        setStatus('mistake');
-        setMistakeCount(mistakeCount + 1);
-    };
+        return () => {
+            document.removeEventListener('keypress', useKeyPress);
+        };
+    }, [activeText, status, speed, time]);
+    useEffect(() => {
+        if (text.length !== 0) {
+            const interval = setInterval(() => {
+                setTime((time) => time + 1);
+                setSpeed(Math.round(correctCount / (time / 60)));
+                setAccuracy(((text.length - mistakeCount) / (text.length / 100)));
+            }, 1000);
+            return () => {
+                clearInterval(interval);
+            };
+        }
+    }, [text, time, speed]);
     return (
         <div>
             <button onClick={getText}>Get text</button>
             <input type="text" ref={inputRef} className={styles.input} />
+            <span>
+                {isNaN(speed) === true ? (0).toFixed(2) : speed.toFixed(2)} {accuracy. toFixed(2)}
+            </span>
             <div className={styles.text}>
                 {passedText !== '' ? (
                     passedText.map((el, index) => {
