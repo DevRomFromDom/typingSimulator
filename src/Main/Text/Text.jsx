@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './Text.module.scss';
 import Letter from './Letter/Letter';
+import NavBar from '../NavBar/NavBar';
+import Target from '../icons/target.svg';
+import Speed from '../icons/speed.svg';
 
-const Text = () => {
+const Text = ({ start, language, textLenguage }) => {
     const [text, setText] = useState([]);
     const [time, setTime] = useState(0);
     const [passedText, setPassedText] = useState([]);
@@ -16,28 +19,32 @@ const Text = () => {
     const [accuracy, setAccuracy] = useState(100);
     const inputRef = useRef();
 
-    const getText = async (e) => {
-        try {
-            const newText = async () => {
-                const res = await fetch('https://fish-text.ru/get?&type=paragraph&number=3&type=json');
-                const data = res.json();
-                return data;
-            };
-            newText().then((data) => {
-                setChangeIndex(0);
-                setStatus('active');
-                setSpeed(0);
-                setAccuracy(100);
-                setCorrectCount(0);
-                setMistakeCount(0);
-                setText(data.text.split(''));
+    useEffect(() => {
+        const getText = async (e) => {
+            try {
+                const newText = async () => {
+                    const res = await fetch('https://fish-text.ru/get?&type=paragraph&number=3&type=json');
+                    const data = res.json();
+                    return data;
+                };
+                newText().then((data) => {
+                    setChangeIndex(0);
+                    setStatus('active');
+                    setSpeed(0);
+                    setAccuracy(100);
+                    setCorrectCount(0);
+                    setMistakeCount(0);
+                    setText(data.text.split(''));
 
-                inputRef.current.focus();
-            });
-        } catch (e) {
-            console.log('error');
-        }
-    };
+                    inputRef.current.focus();
+                });
+            } catch (e) {
+                console.log('error');
+            }
+        };
+        getText();
+    }, []);
+
     useEffect(() => {
         setPassedText(text.slice(0, changeIndex));
         setActiveText(text.slice(changeIndex, changeIndex + 1));
@@ -57,7 +64,8 @@ const Text = () => {
                 setChangeIndex((changeIndex) => changeIndex + 1);
             }
             if (e.key !== activeText[0] && text.length !== 0 && status === 'active') {
-                setMistakeCount((count) => count + 1);
+                console.log('miss');
+                setMistakeCount((mistakeCount) => mistakeCount + 1);
                 setStatus('mistake');
             }
         };
@@ -66,48 +74,71 @@ const Text = () => {
         return () => {
             document.removeEventListener('keypress', useKeyPress);
         };
-    }, [activeText, status, speed, time]);
+    }, [activeText, status, time, mistakeCount]);
     useEffect(() => {
-        if (text.length !== 0) {
+        if (start !== false) {
             const interval = setInterval(() => {
                 setTime((time) => time + 1);
                 setSpeed(Math.round(correctCount / (time / 60)));
-                setAccuracy(((text.length - mistakeCount) / (text.length / 100)));
+                setAccuracy((text.length - mistakeCount) / (text.length / 100));
             }, 1000);
             return () => {
                 clearInterval(interval);
             };
         }
-    }, [text, time, speed]);
+    }, [start, time]);
+
     return (
-        <div>
-            <button onClick={getText}>Get text</button>
-            <input type="text" ref={inputRef} className={styles.input} />
-            <span>
-                {isNaN(speed) === true ? (0).toFixed(2) : speed.toFixed(2)} {accuracy. toFixed(2)}
-            </span>
-            <div className={styles.text}>
-                {passedText !== '' ? (
-                    passedText.map((el, index) => {
-                        return <Letter value={el} key={index} style={'passed'} />;
-                    })
-                ) : (
-                    <div></div>
-                )}
-                {activeText !== '' ? (
-                    activeText.map((el, index) => {
-                        return <Letter value={el} key={index} style={status} />;
-                    })
-                ) : (
-                    <div></div>
-                )}
-                {defaultText !== '' ? (
-                    defaultText.map((el, index) => {
-                        return <Letter value={el} key={index} style={'default'} />;
-                    })
-                ) : (
-                    <div></div>
-                )}
+        <div className={styles.view}>
+            <NavBar language={language} textLenguage={textLenguage} />
+            <div className={styles.typing_block}>
+                <div className={styles.text_body}>
+                    <input type="text" ref={inputRef} className={styles.input} />
+                    <div className={styles.text}>
+                        {passedText !== '' ? (
+                            passedText.map((el, index) => {
+                                return <Letter value={el} key={index} style={'passed'} />;
+                            })
+                        ) : (
+                            <div></div>
+                        )}
+                        {activeText !== '' ? (
+                            activeText.map((el, index) => {
+                                return <Letter value={el} key={index} style={status} />;
+                            })
+                        ) : (
+                            <div></div>
+                        )}
+                        {defaultText !== '' ? (
+                            defaultText.map((el, index) => {
+                                return <Letter value={el} key={index} style={'default'} />;
+                            })
+                        ) : (
+                            <div></div>
+                        )}
+                    </div>
+                </div>
+                <div className={styles.indicators}>
+                    <div className={styles.speed}>
+                        <span className={styles.indicators_span}>
+                            <img src={Speed} alt="" className={styles.icon} />
+                            Скорость
+                        </span>
+                        <span className={styles.indicators_numbers}>
+                            {isNaN(speed) === true ? (0).toFixed(2) : speed.toFixed(2)}
+                            <span className={styles.small_text}>зн/мин.</span>
+                        </span>
+                    </div>
+                    <div className={styles.accuracy}>
+                        <span className={styles.indicators_span}>
+                            <img src={Target} alt="" className={styles.icon} />
+                            Точность
+                        </span>
+                        <span className={styles.indicators_numbers}>
+                            {accuracy.toFixed(2)} <span className={styles.small_text}>%</span>
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     );
