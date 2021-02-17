@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/typingSimulator/static/css/main.6c23e1c0.chunk.css",
-    "main.js": "/typingSimulator/static/js/main.c71eb539.chunk.js",
-    "main.js.map": "/typingSimulator/static/js/main.c71eb539.chunk.js.map",
+    "main.js": "/typingSimulator/static/js/main.4f7a5353.chunk.js",
+    "main.js.map": "/typingSimulator/static/js/main.4f7a5353.chunk.js.map",
     "runtime-main.js": "/typingSimulator/static/js/runtime-main.c34ff8d4.js",
     "runtime-main.js.map": "/typingSimulator/static/js/runtime-main.c34ff8d4.js.map",
     "static/css/2.2f9ba80b.chunk.css": "/typingSimulator/static/css/2.2f9ba80b.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.2f9ba80b.chunk.css",
     "static/js/2.4d815c7d.chunk.js",
     "static/css/main.6c23e1c0.chunk.css",
-    "static/js/main.c71eb539.chunk.js"
+    "static/js/main.4f7a5353.chunk.js"
   ]
 }
