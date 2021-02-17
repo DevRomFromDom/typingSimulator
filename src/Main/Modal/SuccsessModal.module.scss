@@ -1,0 +1,51 @@
+.indicators{
+    display: flex;
+    align-items: center;
+
+}
+
+.accuracy {
+    padding: 10px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.speed {
+    padding: 10px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.indicators_span{
+    display: flex;
+    justify-content: center;
+    font-weight: 600;
+    color:rgb(122, 126, 126);
+    align-items: center;
+
+
+}
+.icon{
+    width: 20px;
+    height: 20px;
+    margin-right:10px ;
+}
+.indicators_numbers{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 30%;
+    font-size: 25px;
+    font-weight: 600;
+    color:rgb(122, 126, 126);
+}
+.small_text{
+    padding-left: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-size:small;
+
+}

@@ -2,10 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import styles from './Text.module.scss';
 import Letter from './Letter/Letter';
 import NavBar from '../NavBar/NavBar';
-import Target from '../icons/target.svg';
-import Speed from '../icons/speed.svg';
+import Target from '../../icons/target.svg';
+import Speed from '../../icons/speed.svg';
+import SuccessModal from '../Modal/SuccessModal';
+import StartModal from '../Modal/StartModal';
 
-const Text = ({ start, language, textLenguage }) => {
+const Text = ({ start, startTest, language, textLanguage }) => {
     const [text, setText] = useState([]);
     const [time, setTime] = useState(0);
     const [passedText, setPassedText] = useState([]);
@@ -19,31 +21,47 @@ const Text = ({ start, language, textLenguage }) => {
     const [accuracy, setAccuracy] = useState(100);
     const inputRef = useRef();
 
-    useEffect(() => {
-        const getText = async (e) => {
-            try {
-                const newText = async () => {
-                    const res = await fetch('https://fish-text.ru/get?&type=paragraph&number=3&type=json');
-                    const data = res.json();
-                    return data;
-                };
-                newText().then((data) => {
-                    setChangeIndex(0);
-                    setStatus('active');
-                    setSpeed(0);
-                    setAccuracy(100);
-                    setCorrectCount(0);
-                    setMistakeCount(0);
-                    setText(data.text.split(''));
+    const ruUrl = 'https://fish-text.ru/get?&type=paragraph&number=3&type=json';
+    const enUrl = 'https://baconipsum.com/api/?callback=?type=meat-and-filler&paras=2';
 
-                    inputRef.current.focus();
-                });
-            } catch (e) {
-                console.log('error');
-            }
-        };
-        getText();
-    }, []);
+    const getText = async (e) => {
+        try {
+            const newText = async () => {
+                const res = await fetch(`${language === 'Russian layout' ? ruUrl : enUrl}`);
+                const data = res.json();
+                return data;
+            };
+            newText().then((data) => {
+                setTime(0);
+                setChangeIndex(0);
+                setStatus('active');
+                setSpeed(0);
+                setAccuracy(100);
+                setCorrectCount(0);
+                setMistakeCount(0);
+                if (language !== 'Russian layout') {
+                    const newData = data.join();
+                    setText(newData.split(''));
+                } else {
+                    setText(data.text.split(''));
+                }
+
+                inputRef.current.focus();
+            });
+        } catch (e) {
+            console.log('error');
+        }
+    };
+    useEffect(() => {
+        if (start === false && time === 0) {
+            getText();
+        }
+    }, [start, language]);
+    useEffect(() => {
+        if (text.length === passedText.length && text.length !== 0) {
+            startTest();
+        }
+    }, [text, passedText]);
 
     useEffect(() => {
         setPassedText(text.slice(0, changeIndex));
@@ -76,7 +94,7 @@ const Text = ({ start, language, textLenguage }) => {
         };
     }, [activeText, status, time, mistakeCount]);
     useEffect(() => {
-        if (start !== false) {
+        if (start) {
             const interval = setInterval(() => {
                 setTime((time) => time + 1);
                 setSpeed(Math.round(correctCount / (time / 60)));
@@ -90,32 +108,32 @@ const Text = ({ start, language, textLenguage }) => {
 
     return (
         <div className={styles.view}>
-            <NavBar language={language} textLenguage={textLenguage} />
+            <NavBar language={language} textLanguage={textLanguage} start={start} startTest={startTest} restart={getText}/>
+            <StartModal startTest={startTest} start={start} language={language} textLanguage={textLanguage} time={time} />
+            <SuccessModal
+                startTest={startTest}
+                passedText={passedText}
+                text={text}
+                speed={speed}
+                accuracy={accuracy}
+                restart={getText}
+            />
             <div className={styles.typing_block}>
                 <div className={styles.text_body}>
                     <input type="text" ref={inputRef} className={styles.input} />
                     <div className={styles.text}>
-                        {passedText !== '' ? (
+                        {passedText !== '' &&
                             passedText.map((el, index) => {
                                 return <Letter value={el} key={index} style={'passed'} />;
-                            })
-                        ) : (
-                            <div></div>
-                        )}
-                        {activeText !== '' ? (
+                            })}
+                        {activeText !== '' &&
                             activeText.map((el, index) => {
                                 return <Letter value={el} key={index} style={status} />;
-                            })
-                        ) : (
-                            <div></div>
-                        )}
-                        {defaultText !== '' ? (
+                            })}
+                        {defaultText !== '' &&
                             defaultText.map((el, index) => {
                                 return <Letter value={el} key={index} style={'default'} />;
-                            })
-                        ) : (
-                            <div></div>
-                        )}
+                            })}
                     </div>
                 </div>
                 <div className={styles.indicators}>
@@ -125,7 +143,7 @@ const Text = ({ start, language, textLenguage }) => {
                             Скорость
                         </span>
                         <span className={styles.indicators_numbers}>
-                            {isNaN(speed) === true ? (0).toFixed(2) : speed.toFixed(2)}
+                            {isNaN(speed) ? (0).toFixed(2) : speed.toFixed(2)}
                             <span className={styles.small_text}>зн/мин.</span>
                         </span>
                     </div>

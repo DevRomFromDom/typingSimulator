@@ -1,13 +1,20 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle';
+import React, { useEffect, useState } from 'react';
 import DropDown from '../DropDown/DropDown'
 import { Modal, Button } from 'react-bootstrap';
 
-const ModalComponent = ({ startTest, start, language, textLanguage }) => {
+const StartModal = ({ startTest, start, language, textLanguage,time }) => {
+    const [show,setShow]= useState(false)
+    useEffect(()=>{
+        if(time ===0 && start === false){
+            setShow(true)
+        } else{
+            setShow(false)
+        }
+        
+    },[time,start])
     return (
         <div className="modal">
-            <Modal show={!start} centered={true}>
+            <Modal show={show} centered={true} onHide={()=>{}}>
                 <Modal.Header>
                     <Modal.Title>
                         <h4>Тренажер слепой печати</h4>
@@ -29,4 +36,4 @@ const ModalComponent = ({ startTest, start, language, textLanguage }) => {
     );
 };
 
-export default ModalComponent;
+export default StartModal;

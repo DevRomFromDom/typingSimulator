@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styles from './Main.module.scss';
 import Text from './Text/Text';
-import ModalComponent from './Modal/Modal';
+
+
 
 const Main = () => {
     const [start, setStart] = useState(false);
@@ -14,8 +15,7 @@ const Main = () => {
     };
     return (
         <div className={styles.main}>
-            <Text start={start} language={language} textLanguage={textLanguage} />
-            <ModalComponent startTest={startTest} start={start} language={language} textLanguage={textLanguage} />
+            <Text start={start} startTest={startTest} language={language} textLanguage={textLanguage} />      
         </div>
     );
 };
