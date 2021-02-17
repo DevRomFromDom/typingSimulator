@@ -12,7 +12,6 @@ const NavBar = ({ startTest, language, setLanguage, restart }) => {
                     <Button
                         variant="success"
                         onClick={() => {
-                            startTest();
                             restart();
                         }}
                     >

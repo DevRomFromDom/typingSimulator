@@ -33,11 +33,11 @@ const Text = ({ start, startTest, language, setLanguage }) => {
                 return data;
             };
             newText().then((data) => {
+                setSpeed(0);
+                setAccuracy(100);  
                 setTime(0);
                 setChangeIndex(0);
                 setStatus('active');
-                setSpeed(0);
-                setAccuracy(100);
                 setCorrectCount(0);
                 setMistakeCount(0);
                 if (language !== 'Russian') {
@@ -150,7 +150,9 @@ const Text = ({ start, startTest, language, setLanguage }) => {
                             Скорость
                         </span>
                         <span className={styles.indicators_numbers}>
-                            {isNaN(speed) ? (0).toFixed(2) : speed.toFixed(2)}
+                            {isNaN(speed) || speed === Infinity || speed === -Infinity
+                                ? (0).toFixed(2)
+                                : speed.toFixed(2)}
                             <span className={styles.small_text}>зн/мин.</span>
                         </span>
                     </div>
