@@ -2,7 +2,7 @@ import React from 'react';
 import DropDown from '../DropDown/DropDown';
 import { Navbar, Nav, Button } from 'react-bootstrap';
 
-const NavBar = ({ startTest, language, textLanguage, restart }) => {
+const NavBar = ({ startTest, language, setLanguage, restart }) => {
     return (
         <Navbar bg="dark" variant="dark" expand="lg" className="p-2 pt-1 pb-1 b2 rounded">
             <Navbar.Brand> Тренажер слепой печати</Navbar.Brand>
@@ -16,10 +16,10 @@ const NavBar = ({ startTest, language, textLanguage, restart }) => {
                             restart();
                         }}
                     >
-                        Начать тест
+                        Тестирование
                     </Button>
                 </Nav>
-                <DropDown language={language} textLanguage={textLanguage} />
+                <DropDown language={language} setLanguage={setLanguage} />
             </Navbar.Collapse>
         </Navbar>
     );

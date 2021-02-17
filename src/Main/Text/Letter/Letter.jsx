@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './Letter.module.scss';
 
 const Letter = ({ value, style }) => {
-    const [status, setStatus] = useState('default');
-
-    useEffect(() => {
-        setStatus(style);
-    }, [style]);
-
-    if (status === 'mistake') {
+    if (style === 'mistake') {
         return <span className={styles.mistake}>{value}</span>;
-    } else if (status === 'active') {
+    } else if (style === 'active') {
         return <span className={styles.active}>{value}</span>;
-    } else if (status==='passed'){
-          return <span className={styles.passed}>{value}</span>;
-    } else{
+    } else if (style === 'passed') {
+        return <span className={styles.passed}>{value}</span>;
+    } else {
         return <span className={styles.default}>{value}</span>;
     }
 };

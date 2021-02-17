@@ -7,7 +7,7 @@ import Speed from '../../icons/speed.svg';
 import SuccessModal from '../Modal/SuccessModal';
 import StartModal from '../Modal/StartModal';
 
-const Text = ({ start, startTest, language, textLanguage }) => {
+const Text = ({ start, startTest, language, setLanguage }) => {
     const [text, setText] = useState([]);
     const [time, setTime] = useState(0);
     const [passedText, setPassedText] = useState([]);
@@ -24,10 +24,11 @@ const Text = ({ start, startTest, language, textLanguage }) => {
     const ruUrl = 'https://fish-text.ru/get?&type=paragraph&number=3&type=json';
     const enUrl = 'https://baconipsum.com/api/?callback=?type=meat-and-filler&paras=2';
 
+    //Main function. Get text from API
     const getText = async (e) => {
         try {
             const newText = async () => {
-                const res = await fetch(`${language === 'Russian layout' ? ruUrl : enUrl}`);
+                const res = await fetch(`${language === 'Russian' ? ruUrl : enUrl}`);
                 const data = res.json();
                 return data;
             };
@@ -39,7 +40,7 @@ const Text = ({ start, startTest, language, textLanguage }) => {
                 setAccuracy(100);
                 setCorrectCount(0);
                 setMistakeCount(0);
-                if (language !== 'Russian layout') {
+                if (language !== 'Russian') {
                     const newData = data.join();
                     setText(newData.split(''));
                 } else {
@@ -49,29 +50,35 @@ const Text = ({ start, startTest, language, textLanguage }) => {
                 inputRef.current.focus();
             });
         } catch (e) {
-            console.log('error');
+            console.log(e);
         }
     };
+
+    //JSON API call
     useEffect(() => {
         if (start === false && time === 0) {
             getText();
         }
     }, [start, language]);
+
+    //Flag to start typing
     useEffect(() => {
         if (text.length === passedText.length && text.length !== 0) {
             startTest();
         }
     }, [text, passedText]);
 
+    //Text styles by slice to a three arrays
     useEffect(() => {
         setPassedText(text.slice(0, changeIndex));
         setActiveText(text.slice(changeIndex, changeIndex + 1));
         setDefaultText(text.slice(changeIndex + 1));
     }, [text, changeIndex]);
+
+    //KeyEvents
     useEffect(() => {
         const useKeyPress = async (e) => {
             inputRef.current.focus();
-
             if (e.key === 'Tab') {
                 e.preventDefault();
                 inputRef.current.focus();
@@ -82,7 +89,6 @@ const Text = ({ start, startTest, language, textLanguage }) => {
                 setChangeIndex((changeIndex) => changeIndex + 1);
             }
             if (e.key !== activeText[0] && text.length !== 0 && status === 'active') {
-                console.log('miss');
                 setMistakeCount((mistakeCount) => mistakeCount + 1);
                 setStatus('mistake');
             }
@@ -93,6 +99,8 @@ const Text = ({ start, startTest, language, textLanguage }) => {
             document.removeEventListener('keypress', useKeyPress);
         };
     }, [activeText, status, time, mistakeCount]);
+
+    //Time and maths operators (speed and accuracy)
     useEffect(() => {
         if (start) {
             const interval = setInterval(() => {
@@ -108,16 +116,14 @@ const Text = ({ start, startTest, language, textLanguage }) => {
 
     return (
         <div className={styles.view}>
-            <NavBar language={language} textLanguage={textLanguage} start={start} startTest={startTest} restart={getText}/>
-            <StartModal startTest={startTest} start={start} language={language} textLanguage={textLanguage} time={time} />
-            <SuccessModal
+            <NavBar
+                language={language}
+                setLanguage={setLanguage}
+                start={start}
                 startTest={startTest}
-                passedText={passedText}
-                text={text}
-                speed={speed}
-                accuracy={accuracy}
                 restart={getText}
             />
+
             <div className={styles.typing_block}>
                 <div className={styles.text_body}>
                     <input type="text" ref={inputRef} className={styles.input} />
@@ -136,6 +142,7 @@ const Text = ({ start, startTest, language, textLanguage }) => {
                             })}
                     </div>
                 </div>
+
                 <div className={styles.indicators}>
                     <div className={styles.speed}>
                         <span className={styles.indicators_span}>
@@ -158,6 +165,17 @@ const Text = ({ start, startTest, language, textLanguage }) => {
                     </div>
                 </div>
             </div>
+
+            <StartModal startTest={startTest} start={start} language={language} setLanguage={setLanguage} time={time} />
+
+            <SuccessModal
+                startTest={startTest}
+                passedText={passedText}
+                text={text}
+                speed={speed}
+                accuracy={accuracy}
+                restart={getText}
+            />
         </div>
     );
 };

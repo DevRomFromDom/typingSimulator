@@ -1,13 +1,13 @@
 import React from 'react';
 import { Dropdown, DropdownButton } from 'react-bootstrap';
 
-const DropDown = ({ language, textLanguage }) => {
+const DropDown = ({ language, setLanguage }) => {
     return (
         <DropdownButton id="dropdown-basic-button" variant="secondary" title={language}>
             <Dropdown.Item
                 value={'Russian'}
                 onClick={(e) => {
-                    textLanguage(e);
+                    setLanguage('Russian');
                 }}
             >
                 Russian layout
@@ -15,7 +15,7 @@ const DropDown = ({ language, textLanguage }) => {
             <Dropdown.Item
                 value={'English'}
                 onClick={(e) => {
-                    textLanguage(e);
+                    setLanguage('English');
                 }}
             >
                 English layout
